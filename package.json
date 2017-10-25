@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/makedonec88/test/issues"
   },
-  "homepage": "https://github.com/makedonec88/test#readme"
+  "homepage": "https://github.com/makedonec88/test#readme",
+  "dependencies": {
+    "jsdom": "^11.3.0",
+    "mongoose": "^4.12.4",
+    "node-telegram-bot-api": "^0.29.0",
+    "request": "^2.83.0"
+  }
 }
