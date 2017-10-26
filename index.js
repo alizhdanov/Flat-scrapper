@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const http = require('http');
 
 const DATABASE = 'mongodb://admin:toor@ds115625.mlab.com:15625/flat'
 
@@ -13,19 +12,6 @@ mongoose.connection.on('error', (err) => {
 // READY?! Let's go!
 require('./models/Flats');
 
-
-const hostname = process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
-const port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-
-const server = http.createServer((req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello World\n');
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
 
 const Flats = mongoose.model('Flats');
 const request = require('request');
@@ -53,7 +39,9 @@ const scrap = () => {
 
         let records = [...document.querySelectorAll('.record')]
             .map(record => {
-                const [rent, utils] = record.querySelector('p.price').textContent.match(/(\d+\.)?\d+/gi).map(d => +d.replace('.', ''));
+                let [rent, utils] = record.querySelector('p.price').textContent.match(/(\d+\.)?\d+/gi).map(d => +d.replace('.', ''));
+                rent = rent || 0;
+                utils = utils || 0;
                 const finalPrice = rent + utils;
                 const url = record.querySelector('p.short-url').textContent;
                 const id = +url.match(/\d+$/)[0];
@@ -80,6 +68,15 @@ const scrap = () => {
                             '*url* = ' + flat.url
                         )
                     }
+                })
+                .catch((err) => {
+                    bot.sendMessageTo(
+                        'ERROR with flat, \n' +
+                        '*final price* = ' + flat.finalPrice + ',\n' +
+                        '*rent* = ' + flat.rent + ',\n' +
+                        '*utils* = ' + flat.utils + ',\n' +
+                        '*url* = ' + flat.url
+                    )
                 })
         })
 
