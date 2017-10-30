@@ -90,8 +90,11 @@ const scrap = () => {
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
 
+  const hours = lastScrapp.getHours();
+  const minutes = lastScrapp.getMinutes();
+
   // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, `Received your message - ${chatId}, no worries, I', alive. Last scrap - ${lastScrapp}`);
+  bot.sendMessage(chatId, `Received your message - ${chatId} \n, no worries, I'm, alive.\n Last scrap - ${hours}:${minutes}`);
 });
 
 scrap()
