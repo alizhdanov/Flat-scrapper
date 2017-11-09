@@ -18,7 +18,10 @@ const request = require('request');
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 const baseUrl = 'https://www.bezrealitky.cz/vypis/nabidka-pronajem/byt/praha?priceTo=10000';
-const bot = require('./bot');
+// const bot = require('./bot');
+
+// const scrapper = require('./modules/puppeteer')
+const scrapper = require('./modules/scrapper')
 
 let lastScrapp = null;
 
@@ -28,74 +31,59 @@ const scrap = () => {
     const date = new Date()
     const time = `${date.getHours()}:${date.getMinutes()}`
     console.log('Starting scraping at - ' + time)
-    request(baseUrl, (error, response, html) => {
 
-        if(error) {
-            console.log(error)
-            return
-        }
+    let records = scrapper(baseUrl)
 
-        const { document } = (new JSDOM(html)).window;
+    console.log('RECORDS---', records)
 
-        let records = [...document.querySelectorAll('.record')]
-            .map(record => {
-                let [rent, utils] = record.querySelector('p.price').textContent.match(/(\d+\.)?\d+/gi).map(d => +d.replace('.', ''));
-                rent = rent || 0;
-                utils = utils || 0;
-                const finalPrice = rent + utils;
-                const url = record.querySelector('p.short-url').textContent;
-                const id = +url.match(/\d+$/)[0];
-                return { finalPrice, rent, utils, id, url }
-            })
 
-        records.forEach((flat) => {
-            Flats
-                .findOne({id: flat.id})
-                .then((res) => {
-                    if (res === null) {
+    // records.forEach((flat) => {
+    //     Flats
+    //         .findOne({id: flat.id})
+    //         .then((res) => {
+    //             if (res === null) {
+    //
+    //                 const newFlat = new Flats(flat);
+    //                 return newFlat.save()
+    //             }
+    //         })
+    //         .then((res) => {
+    //             if (res) {
+    //                 amount++
+    //                 bot.sendMessageTo(
+    //                     '*final price* = ' + flat.finalPrice + ',\n' +
+    //                     '*rent* = ' + flat.rent + ',\n' +
+    //                     '*utils* = ' + flat.utils + ',\n' +
+    //                     '*url* = ' + flat.url
+    //                 )
+    //             }
+    //         })
+    //         .catch((err) => {
+    //             bot.sendMessageTo(
+    //                 'ERROR with flat, \n' +
+    //                 '*final price* = ' + flat.finalPrice + ',\n' +
+    //                 '*rent* = ' + flat.rent + ',\n' +
+    //                 '*utils* = ' + flat.utils + ',\n' +
+    //                 '*url* = ' + flat.url
+    //             )
+    //         })
+    // })
 
-                        const newFlat = new Flats(flat);
-                        return newFlat.save()
-                    }
-                })
-                .then((res) => {
-                    if (res) {
-                        amount++
-                        bot.sendMessageTo(
-                            '*final price* = ' + flat.finalPrice + ',\n' +
-                            '*rent* = ' + flat.rent + ',\n' +
-                            '*utils* = ' + flat.utils + ',\n' +
-                            '*url* = ' + flat.url
-                        )
-                    }
-                })
-                .catch((err) => {
-                    bot.sendMessageTo(
-                        'ERROR with flat, \n' +
-                        '*final price* = ' + flat.finalPrice + ',\n' +
-                        '*rent* = ' + flat.rent + ',\n' +
-                        '*utils* = ' + flat.utils + ',\n' +
-                        '*url* = ' + flat.url
-                    )
-                })
-        })
-
-        console.log(`Found ${amount} flats`)
-    })
+    console.log(`Found ${amount} flats`)
 
     lastScrapp = new Date()
 
 }
 
-bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-
-  const hours = lastScrapp.getHours();
-  const minutes = lastScrapp.getMinutes();
-
-  // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, `Received your message - ${chatId} \n, no worries, I'm, alive.\n Last scrap - ${hours}:${minutes}`);
-});
+// bot.on('message', (msg) => {
+//   const chatId = msg.chat.id;
+//
+//   const hours = lastScrapp.getHours();
+//   const minutes = lastScrapp.getMinutes();
+//
+//   // send a message to the chat acknowledging receipt of their message
+//   bot.sendMessage(chatId, `Received your message - ${chatId} \n, no worries, I'm, alive.\n Last scrap - ${hours}:${minutes}`);
+// });
 
 scrap()
 
