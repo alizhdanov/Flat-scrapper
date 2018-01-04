@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/makedonec88/test#readme",
   "dependencies": {
-    "jsdom": "^11.3.0",
-    "mongoose": "^4.12.4",
+    "jsdom": "^11.5.1",
+    "mongoose": "^4.13.8",
     "node-telegram-bot-api": "^0.29.0",
     "puppeteer": "^0.12.0",
     "request": "^2.83.0"

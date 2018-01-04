@@ -42,7 +42,7 @@ const bot = new ScrapperBot(token, {polling: true});
 // });
 
 bot.sendMessageTo(
-    `*Hi*,\n  how are you ?`
+    `*Hi*,\n  I've started to work ?`
 )
 
 module.exports = bot
