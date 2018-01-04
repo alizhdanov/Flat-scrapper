@@ -1,7 +1,7 @@
 const request = require('request');
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
-// TODO: wrap it up to Promise probably or await shit
+
 const scrap = (url) => {
     return new Promise((resolve, reject) => {
         request(url, (error, response, html) => {
